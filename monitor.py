@@ -17,7 +17,7 @@ STRC_DROP_PCT    = 2.0
 STRC_RISE_PCT    = 3.0
 BROADCAST_EVERY_N= 3
 
-SCRIPT_VERSION   = "2.1"
+SCRIPT_VERSION   = "2.2"
 GIST_FILE        = "susdat_state.json"
 HEADERS          = {"Authorization": f"token {GIST_TOKEN}", "Accept": "application/vnd.github+json"}
 
