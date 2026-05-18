@@ -30,7 +30,7 @@ STRC_DROP_PCT      = 2.0    # STRC 下跌提醒（%）
 STRC_RISE_PCT      = 3.0    # STRC 上涨提醒（%）
 
 # 定时播报：每 N 次运行播报一次（每次5分钟，6次=30分钟）
-BROADCAST_EVERY_N  = 6
+BROADCAST_EVERY_N  = 3   # 3次×5分钟 = 每15分钟播报一次
 
 # ============================================================
 #  工具函数
@@ -94,6 +94,7 @@ def get_strc():
 # ============================================================
 #  Gist 状态持久化
 # ============================================================
+SCRIPT_VERSION = "2.1"   # 版本变更时自动重置状态并发送启动通知
 GIST_FILE = "susdat_state.json"
 HEADERS   = {"Authorization": f"token {GIST_TOKEN}", "Accept": "application/vnd.github+json"}
 
@@ -119,13 +120,14 @@ def main():
     # 读取历史状态
     try:
         state = load_state()
-        is_first_run = False
+        is_first_run = not state or state.get("version") != SCRIPT_VERSION
     except Exception:
         is_first_run = True
         state = {}
 
-    if is_first_run or not state:
+    if is_first_run:
         state = {
+            "version": SCRIPT_VERSION,
             "susdat_last": susdat_price,
             "susdat_notified": susdat_price,
             "strc_last": strc_price,
@@ -230,6 +232,7 @@ def main():
         )
 
     # 保存状态
+    state["version"]     = SCRIPT_VERSION
     state["susdat_last"] = susdat_price
     state["strc_last"]   = strc_price
     state["run_count"]   = run_count
